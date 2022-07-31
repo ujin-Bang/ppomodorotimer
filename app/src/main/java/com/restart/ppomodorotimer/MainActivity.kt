@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         findViewById(R.id.seekBar)
     }
 
+    private var currentCountDownTimer: CountDownTimer? = null //이 카운트다운 타이머는 앱이시작하자마자 생기는 것이 아니므로 초기값 널로 설정.
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,7 +36,10 @@ class MainActivity : AppCompatActivity() {
                remainMinutesTextView.text = "%02d".format(progress) //정수형식 변환 => progress정수를 2자리로 표현.
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            override fun onStartTrackingTouch(seekBar: SeekBar?) { //타이머를 새로 셋업하는 함수. 기존의 타이머를 멈춰줘야함.
+
+                currentCountDownTimer?.cancel()
+                currentCountDownTimer = null
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) { //터치가 끝났을 때 카운트다운 시작하는 함수.
@@ -42,7 +47,9 @@ class MainActivity : AppCompatActivity() {
                 seekBar ?: return //시크바가 널일 경우 바로 리턴하므로 카운트다운을 진행하지 않게.  좌측에 있는 값이 널일 경우 우측의 값을 리턴한다. 코틀린에서는 익스프레션으로 리턴을 할 수 있기 때문에 온스타트 터치를 바로 리턴하도록.
 
                 //분(progress)를 60을 곱해 초로 만들고 다시 1000을 곱해 밀리세컨드로 만든다. => createCountDownTimer의 인자가 Long타입이므로 Long타입이 들어가야 하기 때문.
-                createCountDownTimer(seekBar.progress * 60 * 1000L)
+              currentCountDownTimer = createCountDownTimer(seekBar.progress * 60 * 1000L)
+
+                currentCountDownTimer?.start()
             }
 
         })
