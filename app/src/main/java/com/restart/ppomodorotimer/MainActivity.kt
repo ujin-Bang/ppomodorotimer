@@ -71,8 +71,7 @@ class MainActivity : AppCompatActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
                 //기존 타이머를 멈추게
                 //기존 타이머를 멈추지 않은 상태로 새로운 시간을 지정하면 두가지 카운드다운이 동시에 이동하면서 실행됨.
-                currentCountDownTimer?.cancel()
-                currentCountDownTimer = null
+               stopCountDown()
 
             }
 
@@ -81,7 +80,13 @@ class MainActivity : AppCompatActivity() {
                 seekBar
                     ?: return //시크바가 널일 경우 바로 리턴하므로 카운트다운을 진행하지 않게.  좌측에 있는 값이 널일 경우 우측의 값을 리턴한다. 코틀린에서는 익스프레션으로 리턴을 할 수 있기 때문에 온스타트 터치를 바로 리턴하도록.
 
-                startCountDown()
+                if(seekBar.progress ==0) {
+
+                    stopCountDown()
+
+                }else{
+                    startCountDown()
+                }
 
             }
 
@@ -126,6 +131,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun stopCountDown(){
+        currentCountDownTimer?.cancel()
+        currentCountDownTimer = null
+        soundPool.autoPause()
+
+    }
+
     private fun completeCountDown() {
         updateRemainTime(0) //텍스트는 0000으로 초기화
         updateSeekBar(0) //시크바는 왼쪽으로 초기화
@@ -144,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         val remainMinutes = remainMillis / 1000 / 60  //입력받은 밀리세컨드를 초로 만들고 다시 60으로 나눠 분 추출
         val remainSeconds = remainMillis / 1000 % 60  //입력받은 밀리세턴드를 초로 만들고 60으로 나눈 나머지값 => 초 추출
 
-        remainMinutesTextView.text = "%02d".format(remainMinutes) //분 추출
+        remainMinutesTextView.text = "%02d'".format(remainMinutes) //분 추출
         remainSecondsTextView.text = "%02d".format(remainSeconds) //초 추출
     }
 
